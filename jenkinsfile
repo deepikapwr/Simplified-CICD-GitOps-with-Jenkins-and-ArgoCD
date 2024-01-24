@@ -11,7 +11,7 @@ pipeline {
             steps {
                 sh 'pwd'
                 sh 'echo passed!!!!'
-                git branch: 'main', url: 'git@github.com:deepikapwr/Simplified-CICD-GitOps-with-Jenkins-and-ArgoCD.git' ## replace with your github repository 
+                git branch: 'main', url: 'git@github.com:deepikapwr/Simplified-CICD-GitOps-with-Jenkins-and-ArgoCD.git'
                 sh 'pwd'
                 sh 'ls'
             }
@@ -25,7 +25,7 @@ pipeline {
         }
         stage('Static Code Analysis') {
             environment {
-                SONAR_URL = "http://13.127.183.32:9000/"  ## replace the address once the sonarqube server is live 
+                SONAR_URL = "http://13.127.183.32:9000/"  
             }
             steps {
                 withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
@@ -35,7 +35,7 @@ pipeline {
         }
         stage('Build and Push Docker Image') {
             environment {
-                DOCKER_IMAGE = "kiran63/ultimate-cicd:${BUILD_NUMBER}" ## replace the DockerHub account name with yours 
+                DOCKER_IMAGE = "dpka531/completecicd:${BUILD_NUMBER}" 
                 DOCKERFILE_LOCATION = "java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile"
                 REGISTRY_CREDENTIALS = credentials('docker-cred')
             }
@@ -51,14 +51,14 @@ pipeline {
         }
         stage('Update Deployment File') {
             environment {
-                GIT_REPO_NAME = "complete-CI/CD" ## replace with your github repository name
-                GIT_USER_NAME = "deepikapwr"   ## replace with your github account username
+                GIT_REPO_NAME = "complete-CI/CD"
+                GIT_USER_NAME = "deepikapwr"  
             }
             steps {
                 withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
                     sh '''
-                        git config user.email "dpka531@gmail.com" ## replace with your github useremail
-                        git config user.name "deepikapwr"            ## replace with your github usernamename
+                        git config user.email "dpka531@gmail.com" 
+                        git config user.name "deepikapwr"            
                         OLD_BUILD_NUMBER=$((${BUILD_NUMBER}-1))
                         sed -i "s/${OLD_BUILD_NUMBER}/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
                         git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
