@@ -7,11 +7,6 @@ pipeline {
     }
   
     stages {
-        stage('Clean Workspace') {
-            steps {
-                cleanWs()
-            }
-        }
         stage('Checkout') {
             steps {
                 sh 'pwd'
@@ -66,11 +61,10 @@ pipeline {
                         git config user.name "deepikapwr"            
                         OLD_BUILD_NUMBER=$((${BUILD_NUMBER}-1))
                         sed -i "s/${OLD_BUILD_NUMBER}/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-                        cat script.sh
-                        bash -x script.sh
                         git add .
                         git commit -m "Update deployment image to version ${BUILD_NUMBER}"
                         git push @github.com/${GIT_USER_NAME}/${GIT_REPO_NAME">https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
+                        cat script.sh
                     '''
                 }
             }
